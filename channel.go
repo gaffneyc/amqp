@@ -141,7 +141,11 @@ func (me *Channel) open() error {
 // Performs a request/response call for when the message is not NoWait and is
 // specified as Synchronous.
 func (me *Channel) call(req message, res ...message) error {
-	if err := me.send(me, req); err != nil {
+	me.m.Lock()
+	send := me.send
+	me.m.Unlock()
+
+	if err := send(me, req); err != nil {
 		return err
 	}
 
